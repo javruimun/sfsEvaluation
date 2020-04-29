@@ -38,10 +38,9 @@ def validacionCruzada():
     
     for i in range(n_exp):
         tree = DecisionTreeClassifier()
-        modelo = tree.fit(X,y)
-        scores = cross_val_score(modelo,X,y,cv=3,
+        scores = cross_val_score(tree,X,y,cv=3,
                              scoring = 'balanced_accuracy')
-        avgScores = sum(scores)/len(scores)
+        avgScores = np.mean(scores)
         accuracies.update({i:avgScores})
         i+=1
 
@@ -50,7 +49,6 @@ def validacionCruzada():
 
 
 print(validacionCruzada())
-
 
 
 
