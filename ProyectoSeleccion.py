@@ -17,11 +17,11 @@ from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
 from sklearn.tree import DecisionTreeClassifier
 
-
-
 ##Sacamos los datos del fichero csv
 datos = pd.read_csv('titanic.csv', sep=',', index_col=0)
 dataFrame = pd.DataFrame(datos)
+
+
 
 #SFS!!!!!
 def sfs(answerVar, predictorVar, D):
@@ -31,25 +31,44 @@ def sfs(answerVar, predictorVar, D):
     varPerIter = dict()
     
     
-    
     if D is None:
-        D = len(predictorVar.columns)
-        
-    for k in range(1,D):
+        D = 1#len(predictorVar.columns)
+
+    for k in range(0,D):
         
         varPerJ = dict()
         
-        for j in range(1, len(predictorVar.columns)):
-            X = predictorVar.iloc[:,j]
-            y = answerVar
-            
-            validacion = validacionRobusta(X,y,CV,hitRate)
-            varPerJ.update({X:validacion})
+        if k==0:
     
-    bestCrossValue = max(varPerJ.values())
+            for j in range(0, len(predictorVar.columns)):
+                X = predictorVar.iloc[:,j]
+                y = answerVar
+                validacion = validacionRobusta(X.to_numpy().reshape(-1,1),y,CV,hitRate)
+                varPerJ.update({j:validacion})
+                
+        else:   
+            print('hola',k)
+       
+            
+            
+    
+    validaciones = varPerJ.values()
+   
+    bestCrossValue = max(validaciones)
+    solucionActual = sacaKey(varPerJ, bestCrossValue)
+    
+    print(solucionActual)
     
     
     return 0
+
+
+def sacaKey(varPerJ, bestCrossValue):
+
+    for i in varPerJ:
+        if varPerJ.get(i) == bestCrossValue:
+            return i;
+    
 
 #Validación robusta
 #Seleccionamos el número de datos de entrada
@@ -73,13 +92,12 @@ def validacionRobusta(X,y,CV,hitRate):
     avgFinal = sum(accuracies.values())/n_exp
     return avgFinal
 
+
+
 ##TEST
 
 answerVar = dataFrame.iloc[:,-1]
 predictorVar = dataFrame.iloc[:,0:-1]
 D=None
-
-
-#valRobusta = validacionRobusta(X,y, CV, hitRate)
 
 sfs(answerVar, predictorVar, D)
