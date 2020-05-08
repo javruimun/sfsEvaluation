@@ -30,13 +30,17 @@ def sfs(answerVar, predictorVar, D):
     hitRate = 'balanced_accuracy'
     varPerIter = dict()
     
+    #Creamos un nuevo dataframe para guardas las soluciones de cada iteracion
+    solucionActual = pd.DataFrame()
+    var = pd.DataFrame()
     
     if D is None:
-        D = 1#len(predictorVar.columns)
+        D = len(predictorVar.columns)
 
     for k in range(0,D):
         
         varPerJ = dict()
+        
         
         if k==0:
     
@@ -46,21 +50,31 @@ def sfs(answerVar, predictorVar, D):
                 validacion = validacionRobusta(X.to_numpy().reshape(-1,1),y,CV,hitRate)
                 varPerJ.update({j:validacion})
                 
-        else:   
-            print('hola',k)
-       
             
+            validaciones = varPerJ.values()
+            bestCrossValue = max(validaciones)
+            validKey = sacaKey(varPerJ, bestCrossValue)
+            columnNameValid = predictorVar.columns[validKey]
+            solucionActual.insert(loc=0, column= columnNameValid,value = predictorVar.iloc[:,validKey])
             
-    
-    validaciones = varPerJ.values()
-   
-    bestCrossValue = max(validaciones)
-    solucionActual = sacaKey(varPerJ, bestCrossValue)
-    
-    print(solucionActual)
-    
-    
-    return 0
+            var = predictorVar.drop(predictorVar.columns[[validKey]], axis='columns')
+        else:  
+            for j in range(0,len(var.columns)):
+                X = pd.concat([solucionActual,var.iloc[:,j]], axis=1)
+                y = answerVar
+                validacion = validacionRobusta(X,y,CV,hitRate)
+                varPerJ.update({j:validacion})
+                
+            validaciones = varPerJ.values()
+            bestCrossValue = max(validaciones)
+            validKey = sacaKey(varPerJ, bestCrossValue)
+            columnNameValid = var.columns[validKey]
+            solucionActual.insert(loc=0, column= columnNameValid,value = var.iloc[:,validKey])
+            
+            var.drop(var.columns[[validKey]], axis='columns')
+            
+        
+    return solucionActual
 
 
 def sacaKey(varPerJ, bestCrossValue):
