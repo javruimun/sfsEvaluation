@@ -74,7 +74,7 @@ def sfs(answerVar, predictorVar, D):
             var.drop(var.columns[[validKey]], axis='columns')
             
         
-    return solucionActual
+    return 0
 
 
 def sacaKey(varPerJ, bestCrossValue):
