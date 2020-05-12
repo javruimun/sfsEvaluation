@@ -22,7 +22,7 @@ def sfs(answerVar, predictorVar, D):
     solucionActual = pd.DataFrame()
     
     supportDataFrame = predictorVar
-    
+   
     if D is None:
         D = len(predictorVar.columns)
      
@@ -33,21 +33,26 @@ def sfs(answerVar, predictorVar, D):
         solucionTemporal = pd.DataFrame();
         
         for j in range(0, len(supportDataFrame.columns)):
-            X = supportDataFrame.iloc[:,j]
+            X = pd.concat([solucionActual,supportDataFrame.iloc[:,j]], axis=1)
             y = answerVar
-            validation = validacionRobusta(X.to_numpy().reshape(-1,1),y,CV,hitRate)
+            if k==1:
+                validation = validacionRobusta(X.to_numpy().reshape(-1,1),y,CV,hitRate)
+            else:
+                validation = validacionRobusta(X,y,CV,hitRate)
+                
             if(validation>lastValue):
                 lastValue = validation
                 solucionTemporal = X
         
         #Eliminamos del supportDataFrame la mejor variable
-        bestColumn = solucionTemporal.name
+        bestColumn = solucionTemporal.columns[k-1]
         del supportDataFrame[bestColumn]
         
         
         #Actualizamos la solución actual; solucionActual = solucionActual + solucionTemporal
-        solucionActual = pd.concat([solucionActual, solucionTemporal], axis=1)
+        solucionActual = solucionTemporal
         print(solucionActual)
+        print(validation)
         
         k = k+1
 
