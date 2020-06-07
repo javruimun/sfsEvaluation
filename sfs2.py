@@ -2,6 +2,9 @@ import pandas as pd
 import numpy as np
 import math
 import sklearn
+import collections
+import operator
+
 
 import matplotlib.pyplot as plt
 from sklearn import tree, linear_model
@@ -20,6 +23,10 @@ def sfs(answerVar, predictorVar, D):
     hitRate = 'balanced_accuracy'
     
     solucionActual = pd.DataFrame()
+    
+    solucion = dict()
+    
+    tabla = pd.DataFrame()
     
     supportDataFrame = predictorVar
    
@@ -51,12 +58,18 @@ def sfs(answerVar, predictorVar, D):
         
         #Actualizamos la solución actual
         solucionActual = solucionTemporal
-        print(solucionActual)
-        print(validation)
-        
+        solucion.update({tuple(solucionActual.columns):validation})
+       
         k = k+1
+        
+        #Creamos un DataFrame para mostrar los resultados
+        sorted(solucion.items(),key=operator.itemgetter(1), reverse=True)
+       
+        df = pd.DataFrame(solucion)
+        print(df)
+        
 
-    return solucionActual
+    return df
 
 def sffs(answerVar, predictorVar):
     CV = 3
@@ -153,6 +166,5 @@ def validacionRobusta(X,y,CV,hitRate):
 answerVar = dataFrame.iloc[:,-1]
 predictorVar = dataFrame.iloc[:,0:-1]
 D=None
-
-#sfs(answerVar, predictorVar, D)
-sffs(answerVar, predictorVar)
+sfs(answerVar, predictorVar, D)
+#sffs(answerVar, predictorVar)
