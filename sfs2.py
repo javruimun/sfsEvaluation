@@ -4,6 +4,7 @@ import math
 import sklearn
 import collections
 import operator
+from collections import OrderedDict
 
 
 import matplotlib.pyplot as plt
@@ -14,7 +15,7 @@ from sklearn.model_selection import cross_val_score
 from sklearn.tree import DecisionTreeClassifier
 
 ##Sacamos los datos del fichero csv
-datos = pd.read_csv('titanic.csv', sep=',', index_col=0)
+datos = pd.read_csv('Titanic.csv', sep=',', index_col=0)
 dataFrame = pd.DataFrame(datos)
 
 #Devolver tabla con variables por k y su respectivo rendimiento
@@ -35,6 +36,7 @@ def sfs(answerVar, predictorVar, D):
      
     k=1
     while(k<D+1):
+    
         
         lastValue = 0
         solucionTemporal = pd.DataFrame();
@@ -62,14 +64,13 @@ def sfs(answerVar, predictorVar, D):
        
         k = k+1
         
-        #Creamos un DataFrame para mostrar los resultados
-        sorted(solucion.items(),key=operator.itemgetter(1), reverse=True)
-       
-        df = pd.DataFrame(solucion)
-        print(df)
+     #Creamos un DataFrame para mostrar los resultados
+    solucion=OrderedDict(sorted(solucion.items(),key=operator.itemgetter(1), reverse=True))
         
-
+    df = pd.DataFrame([[key, solucion[key], len(key)] for key in solucion.keys()], columns=['Solution', 'Score','Size'])
+        
     return df
+        
 
 def sffs(answerVar, predictorVar):
     CV = 3
@@ -82,7 +83,11 @@ def sffs(answerVar, predictorVar):
     
     k=1
     while(k<len(predictorVar.columns)+1):
-        
+        #Comparamos lista
+        añadidosList= sorted(añadidos.columns)
+        predictorVarList= sorted(predictorVar.columns)
+        if añadidosList == predictorVarList:
+            print('TileManagement')
         
         lastValue1 = 0
         solucionTemporal = pd.DataFrame();
@@ -99,7 +104,7 @@ def sffs(answerVar, predictorVar):
                 lastValue1 = validation
                 solucionTemporal = X
         
-        añadidos=solucionTemporal
+        añadidos=pd.concat([añadidos,solucionTemporal.iloc[:,-1]], axis=1)
         solucionActual=solucionTemporal
         if k!=1:
             lastValue2 = 0
@@ -119,9 +124,11 @@ def sffs(answerVar, predictorVar):
                     eliminadoTemporal = solucionActual.iloc[:,j]
             
             if lastValue2>lastValue1:
+                validation=lastValue2
                 solucionActual = mejorSolucionTemporal     
                 eliminados=pd.concat([eliminados,eliminadoTemporal], axis=1)   
-        
+
+       
         #Eliminamos del supportDataFrame la mejor variable
         for c in range (0, len(añadidos.columns)):
             nombreColumna = añadidos.columns[c]
@@ -133,6 +140,7 @@ def sffs(answerVar, predictorVar):
         print(validation)
     
         k = k+1
+    print(añadidos)
         
     return solucionActual
     
@@ -166,5 +174,5 @@ def validacionRobusta(X,y,CV,hitRate):
 answerVar = dataFrame.iloc[:,-1]
 predictorVar = dataFrame.iloc[:,0:-1]
 D=None
-sfs(answerVar, predictorVar, D)
-#sffs(answerVar, predictorVar)
+#sfs(answerVar, predictorVar, D)
+sffs(answerVar, predictorVar)
