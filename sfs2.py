@@ -107,26 +107,12 @@ def sffs(answerVar, predictorVar):
         añadidos=pd.concat([añadidos,solucionTemporal.iloc[:,-1]], axis=1)
         solucionActual=solucionTemporal
         if k!=1:
-            lastValue2 = 0
-            for j in range(0, len(solucionActual.columns)):
-                solucionTemporal=solucionActual
-                solucionTemporal=solucionTemporal.drop([solucionTemporal.columns[j]], axis=1)
-                X = solucionTemporal
-                y = answerVar
-                if len(solucionActual.columns) == 2:
-                    validation = validacionRobusta(X.to_numpy().reshape(-1,1),y,CV,hitRate)
-                else:
-                    validation = validacionRobusta(X,y,CV,hitRate)
-                
-                if(validation>lastValue2):
-                    lastValue2 = validation
-                    mejorSolucionTemporal = X
-                    eliminadoTemporal = solucionActual.iloc[:,j]
+            res = haciaAtras(solucionActual, lastValue1, CV, hitRate, eliminados)
+            solucionActual= res[0]
+            solucionTemporal= res[1]
+            eliminados= res[2]
+            validation= res[3]
             
-            if lastValue2>lastValue1:
-                validation=lastValue2
-                solucionActual = mejorSolucionTemporal     
-                eliminados=pd.concat([eliminados,eliminadoTemporal], axis=1)   
 
        
         #Eliminamos del supportDataFrame la mejor variable
@@ -143,8 +129,36 @@ def sffs(answerVar, predictorVar):
     print(añadidos)
         
     return solucionActual
+
+def  haciaAtras(solucionActual, lastValue1, CV, hitRate, eliminados):
+        lastValue2 = 0
+        for j in range(0, len(solucionActual.columns)):
+            solucionTemporal=solucionActual
+            solucionTemporal=solucionTemporal.drop([solucionTemporal.columns[j]], axis=1)
+            X = solucionTemporal
+            y = answerVar
+            if len(solucionActual.columns) == 2:
+                validation = validacionRobusta(X.to_numpy().reshape(-1,1),y,CV,hitRate)
+            else:
+                validation = validacionRobusta(X,y,CV,hitRate)
+            
+            if(validation>lastValue2):
+                lastValue2 = validation
+                mejorSolucionTemporal = X
+                eliminadoTemporal = solucionActual.iloc[:,j]
+        
+        if lastValue2>lastValue1:
+            validation=lastValue2
+            solucionActual = mejorSolucionTemporal     
+            eliminados=pd.concat([eliminados,eliminadoTemporal], axis=1)
+        else:
+            validation=lastValue1
+    
+        return (solucionActual, solucionTemporal, eliminados, validation)
     
     
+    
+
     
 
     
