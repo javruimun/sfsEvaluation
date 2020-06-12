@@ -1,0 +1,57 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Jun 10 12:14:55 2020
+
+@author: javier
+"""
+
+
+"""
+ALGORITMO SFFS 
+"""
+
+import pandas as pd
+import numpy as np
+import math
+import sklearn
+import collections
+import operator
+from collections import OrderedDict
+
+
+import matplotlib.pyplot as plt
+from sklearn import tree, linear_model
+from sklearn.metrics import accuracy_score, balanced_accuracy_score
+from sklearn.model_selection import KFold
+from sklearn.model_selection import cross_val_score
+from sklearn.tree import DecisionTreeClassifier
+
+##Sacamos los datos del fichero csv
+datos = pd.read_csv('titanic.csv', sep=',', index_col=0)
+dataFrame = pd.DataFrame(datos)
+
+
+def validacionRobusta(X,y,CV,hitRate):
+    
+    n_exp = 10  
+  
+    scoreI = list()
+    accuracies = dict()
+
+    for i in range(n_exp):
+        tree = DecisionTreeClassifier()
+        
+        #Aplicamos validación cruzada
+        scores = cross_val_score(tree,X,y,cv=CV,scoring=hitRate)
+        #print(scores)
+        avgScores = np.mean(scores)
+        accuracies.update({i:avgScores})
+
+    avgFinal = sum(accuracies.values())/n_exp
+    return avgFinal
+
+
+def sffs():
+    
+    
