@@ -46,11 +46,35 @@ def sffs(answerVar, predictorVar):
             nombreColumna = añadidos[c]
             if nombreColumna in supportDataFrame.columns:
                 supportDataFrame=supportDataFrame.drop(nombreColumna, axis=1)
-       
-        print(solucionActual)
+                #Comparamos lista
+      
+        
+        print(solucionActual.columns)
+        
         
         k=k+1
         
+    añadidosList= sorted(añadidos)
+    predictorVarList= sorted(predictorVar.columns)
+    
+    if añadidosList == predictorVarList:
+        c=0
+        eliminadosSinParada=eliminados[:]
+        while(c<10):
+            res = eliminaSiHayMejora(solucionActual, rendimiento, CV, hitRate, eliminados) 
+            solucionActual = res[0]
+            rendimiento = res[2]
+            if eliminadosSinParada == eliminados:
+                c=c+1
+                
+            else:
+                c=0
+                eliminadosSinParada = eliminados[:]
+            print(c)
+            print(solucionActual.columns)
+            print(validation)
+   
+    print(añadidos)
     return solucionActual
 
 
