@@ -23,6 +23,8 @@ def sffs(answerVar, predictorVar):
     
     añadidos = list()
     eliminados = list()
+    solucion = dict()
+    
     
     k=0
     
@@ -40,6 +42,8 @@ def sffs(answerVar, predictorVar):
             eliminados= res[1]
             validation= res[2]
             print(validation)
+            #Guardamos todas las soluciones en un diccionario
+            solucion.update({tuple(solucionActual.columns):validation})
         
           #Eliminamos del supportDataFrame la mejor variable
         for c in range (0, len(añadidos)):
@@ -52,31 +56,26 @@ def sffs(answerVar, predictorVar):
         print(solucionActual.columns)
         
         
-        k=k+1
         
+        k=k+1
+    #Creamos un DataFrame para mostrar los resultados de cada iteración
+    solucionSinParada=mostrarSolucion(solucion)
+    print(solucionSinParada)
+    
     añadidosList= sorted(añadidos)
     predictorVarList= sorted(predictorVar.columns)
     
     if añadidosList == predictorVarList:
-        c=0
-        eliminadosSinParada=eliminados[:]
-        while(c<10):
-            res = eliminaSiHayMejora(solucionActual, rendimiento, CV, hitRate, eliminados) 
-            solucionActual = res[0]
-            rendimiento = res[2]
-            if eliminadosSinParada == eliminados:
-                c=c+1
-                
-            else:
-                c=0
-                eliminadosSinParada = eliminados[:]
-            print(c)
-            print(solucionActual.columns)
-            print(validation)
+        res=condicionDeParada(eliminados,solucionActual,validation,CV, hitRate)
+        solucionActual=res[0]
+        rendimiento=res[1]
+    
+    solucion.update({tuple(solucionActual.columns):rendimiento})
+    solucionConParada=mostrarSolucion(solucion)
    
+    print(solucionConParada)
     print(añadidos)
     return solucionActual
-
 
 def seleccionaMejorVariable(supportDataFrame, solucionActual, k,CV,hitRate):
     
@@ -133,7 +132,27 @@ def eliminaSiHayMejora(solucionActual, rendimiento, CV, hitRate, eliminados):
         validation=rendimiento
     
     return (solucionActual, eliminados, validation)
+
+def mostrarSolucion(solucion):
+    solucionConParada = pd.DataFrame([[key, solucion[key], len(key)] for key in solucion.keys()], columns=['Solution', 'Score','Size'])
+    solucionConParada = solucionConParada.sort_values('Score',ascending=False)
     
+    return solucionConParada
+ 
+def condicionDeParada(eliminados,solucionActual,validation,CV, hitRate):
+    c=0
+    eliminadosSinParada=eliminados[:]
+    while(c<10):
+        res = eliminaSiHayMejora(solucionActual, validation, CV, hitRate, eliminados) 
+        solucionActual = res[0]
+        rendimiento = res[2]
+        if eliminadosSinParada == eliminados:
+            c=c+1
+            
+        else:
+            c=0
+            eliminadosSinParada = eliminados[:]
+    return (solucionActual,rendimiento )
 
 def validacionRobusta(X,y,CV,hitRate):
     
