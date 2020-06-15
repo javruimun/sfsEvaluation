@@ -24,6 +24,7 @@ def sffs(answerVar, predictorVar):
     añadidos = list()
     eliminados = list()
     solucion = dict()
+    solucionFinal=dict()
     
     
     k=0
@@ -70,9 +71,15 @@ def sffs(answerVar, predictorVar):
         solucionActual=res[0]
         rendimiento=res[1]
     
-    solucion.update({tuple(solucionActual.columns):rendimiento})
-    solucionConParada=mostrarSolucion(solucion)
+    solucionFinal.update({tuple(solucionActual.columns):rendimiento})
+    solucionConParada=mostrarSolucion(solucionFinal)
    
+    if solucionSinParada.iloc[0].all() == solucionConParada.iloc[0].all():
+        print('No se ha conseguido mejorar el resultado con la condicion de parada')
+    else:
+         print('Si se ha conseguido mejorar el resultado con la condicion de parada')
+        
+    
     print(solucionConParada)
     print(añadidos)
     return solucionActual
