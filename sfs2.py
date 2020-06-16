@@ -35,7 +35,7 @@ def sfs(answerVar, predictorVar, D):
         D = len(predictorVar.columns)
      
     k=1
-    while(k<D+1):
+    while(k<=D):
     
         
         lastValue = 0
@@ -61,14 +61,14 @@ def sfs(answerVar, predictorVar, D):
         #Actualizamos la solución actual
         solucionActual = solucionTemporal
         solucion.update({tuple(solucionActual.columns):validation})
-       
+        print(solucionActual.columns)
         k = k+1
         
      #Creamos un DataFrame para mostrar los resultados
     solucion=OrderedDict(sorted(solucion.items(),key=operator.itemgetter(1), reverse=True))
         
     df = pd.DataFrame([[key, solucion[key], len(key)] for key in solucion.keys()], columns=['Solution', 'Score','Size'])
-        
+    print(df)        
     return df
         
 
@@ -188,5 +188,5 @@ def validacionRobusta(X,y,CV,hitRate):
 answerVar = dataFrame.iloc[:,-1]
 predictorVar = dataFrame.iloc[:,0:-1]
 D=None
-#sfs(answerVar, predictorVar, D)
-sffs(answerVar, predictorVar)
+sfs(answerVar, predictorVar, D)
+#sffs(answerVar, predictorVar)
