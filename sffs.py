@@ -15,7 +15,7 @@ dataFrame = pd.DataFrame(datos)
 #Creación del algoritmo SFFS
 def sffs(answerVar, predictorVar):
     
-    CV = 3
+    CV = 5
     hitRate = 'balanced_accuracy'
     
     solucionActual = pd.DataFrame()
@@ -131,7 +131,7 @@ def eliminaSiHayMejora(solucionActual, rendimiento, CV, hitRate, eliminados):
             colunmDeleted = solucionActual.iloc[:,j]
             eliminadoTemporal = colunmDeleted.name
         
-    if lastValue2>rendimiento:
+    if lastValue2>=rendimiento:
         validation=lastValue2
         solucionActual = mejorSolucionTemporal     
         eliminados.append(eliminadoTemporal)
@@ -149,8 +149,9 @@ def mostrarSolucion(solucion):
 def condicionDeParada(eliminados,solucionActual,validation,CV, hitRate):
     c=0
     eliminadosSinParada=eliminados[:]
+    rendimiento = validation
     while(c<10):
-        res = eliminaSiHayMejora(solucionActual, validation, CV, hitRate, eliminados) 
+        res = eliminaSiHayMejora(solucionActual, rendimiento, CV, hitRate, eliminados) 
         solucionActual = res[0]
         rendimiento = res[2]
         if eliminadosSinParada == eliminados:
