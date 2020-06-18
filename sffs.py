@@ -9,13 +9,13 @@ from sklearn.tree import DecisionTreeClassifier
 
 
 ##Sacamos los datos del fichero csv
-datos = pd.read_csv('BreastCancerDataset.csv', sep=',', index_col=0)
+datos = pd.read_csv('titanic.csv', sep=',')
 dataFrame = pd.DataFrame(datos)
 
 #Creación del algoritmo SFFS
 def sffs(answerVar, predictorVar):
     
-    CV = 4
+    CV = 3
     hitRate = 'balanced_accuracy'
     
     solucionActual = pd.DataFrame()

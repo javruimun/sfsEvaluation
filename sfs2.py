@@ -15,7 +15,7 @@ from sklearn.model_selection import cross_val_score
 from sklearn.tree import DecisionTreeClassifier
 
 ##Sacamos los datos del fichero csv
-datos = pd.read_csv('Titanic.csv', sep=',', index_col=0)
+datos = pd.read_csv('Titanic.csv', sep=',')
 dataFrame = pd.DataFrame(datos)
 
 #Devolver tabla con variables por k y su respectivo rendimiento
