@@ -9,7 +9,7 @@ from sklearn.tree import DecisionTreeClassifier
 
 
 ##Sacamos los datos del fichero csv
-datos = pd.read_csv('titanic.csv', sep=',', index_col=0)
+datos = pd.read_csv('titanic.csv', sep=',')
 dataFrame = pd.DataFrame(datos)
 
 

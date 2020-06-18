@@ -9,7 +9,9 @@ from sklearn.tree import DecisionTreeClassifier
 
 
 ##Sacamos los datos del fichero csv
+
 datos = pd.read_csv('titanic.csv', sep=',')
+
 dataFrame = pd.DataFrame(datos)
 
 #Creación del algoritmo SFFS
