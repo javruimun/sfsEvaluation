@@ -9,13 +9,13 @@ from sklearn.tree import DecisionTreeClassifier
 
 
 ##Sacamos los datos del fichero csv
-datos = pd.read_csv('titanic.csv', sep=',', index_col=0)
+datos = pd.read_csv('BreastCancerDataset.csv', sep=',', index_col=0)
 dataFrame = pd.DataFrame(datos)
 
 #Creación del algoritmo SFFS
 def sffs(answerVar, predictorVar):
     
-    CV = 5
+    CV = 4
     hitRate = 'balanced_accuracy'
     
     solucionActual = pd.DataFrame()
@@ -45,7 +45,7 @@ def sffs(answerVar, predictorVar):
             print(validation)
             #Guardamos todas las soluciones en un diccionario
             solucion.update({tuple(solucionActual.columns):validation})
-        
+            
           #Eliminamos del supportDataFrame la mejor variable
         for c in range (0, len(añadidos)):
             nombreColumna = añadidos[c]
@@ -58,7 +58,10 @@ def sffs(answerVar, predictorVar):
         
         
         
+        
         k=k+1
+    ultimaSolucion = solucionActual
+    ultimaValidation = validation
     #Creamos un DataFrame para mostrar los resultados de cada iteración
     solucionSinParada=mostrarSolucion(solucion)
     print(solucionSinParada)
@@ -73,8 +76,10 @@ def sffs(answerVar, predictorVar):
     
     solucionFinal.update({tuple(solucionActual.columns):rendimiento})
     solucionConParada=mostrarSolucion(solucionFinal)
-   
-    if solucionSinParada.iloc[0].all() == solucionConParada.iloc[0].all():
+    
+    hayMejora = ultimaSolucion.columns.tolist() == list(solucionConParada['Solution'].values.tolist()[0]) and ultimaValidation == solucionConParada['Score'].values[0]
+    
+    if hayMejora:
         print('No se ha conseguido mejorar el resultado con la condicion de parada')
     else:
          print('Si se ha conseguido mejorar el resultado con la condicion de parada')
@@ -141,10 +146,10 @@ def eliminaSiHayMejora(solucionActual, rendimiento, CV, hitRate, eliminados):
     return (solucionActual, eliminados, validation)
 
 def mostrarSolucion(solucion):
-    solucionConParada = pd.DataFrame([[key, solucion[key], len(key)] for key in solucion.keys()], columns=['Solution', 'Score','Size'])
-    solucionConParada = solucionConParada.sort_values('Score',ascending=False)
+    solucionDataFrame = pd.DataFrame([[key, solucion[key], len(key)] for key in solucion.keys()], columns=['Solution', 'Score','Size'])
+    solucionDataFrame = solucionDataFrame.sort_values('Score',ascending=False)
     
-    return solucionConParada
+    return solucionDataFrame
  
 def condicionDeParada(eliminados,solucionActual,validation,CV, hitRate):
     c=0
