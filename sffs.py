@@ -1,16 +1,13 @@
 import pandas as pd
 import numpy as np
-import operator
-from collections import OrderedDict
-
-
 from sklearn.model_selection import cross_val_score
 from sklearn.tree import DecisionTreeClassifier
 
 
 ##Sacamos los datos del fichero csv
-
 datos = pd.read_csv('titanic.csv', sep=',')
+#datos = pd.read_csv('BreastCancerDataset.csv', sep=',')
+
 
 dataFrame = pd.DataFrame(datos)
 
@@ -79,6 +76,8 @@ def sffs(answerVar, predictorVar):
     solucionFinal.update({tuple(solucionActual.columns):rendimiento})
     solucionConParada=mostrarSolucion(solucionFinal)
     
+    # Guardamos esta comparacion para mostrar posteriormente 
+    # si ha habido mejora con la condicion de parada
     hayMejora = ultimaSolucion.columns.tolist() == list(solucionConParada['Solution'].values.tolist()[0]) and ultimaValidation == solucionConParada['Score'].values[0]
     
     if hayMejora:
@@ -173,7 +172,6 @@ def validacionRobusta(X,y,CV,hitRate):
     
     n_exp = 10  
   
-    scoreI = list()
     accuracies = dict()
 
     for i in range(n_exp):
@@ -181,7 +179,6 @@ def validacionRobusta(X,y,CV,hitRate):
         
         #Aplicamos validación cruzada
         scores = cross_val_score(tree,X,y,cv=CV,scoring=hitRate)
-        #print(scores)
         avgScores = np.mean(scores)
         accuracies.update({i:avgScores})
 
